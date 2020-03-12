@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" href="login-form.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Order Management</title>
+<script type="text/javascript">
+function addOrder()
+{
+	
+	var inorderId = document.getElementById("orderId").value;
+	var inuserId = document.getElementById("userId").value;
+	var increatedDate = document.getElementById("createdDate").value;
+	var orderInfo={userId:inuserId,orderId:inorderId,createdDate:increatedDate};	
+	var promise = window.fetch("/v1/order-service/create-order",{
+		method:'POST',
+		headers: {
+		    'Content-Type': 'application/json;charset=utf-8'
+		  },
+		body: JSON.stringify(orderInfo)
+	});
+	promise.then(response=>response.text())
+	.then(message =>{
+		console.log(message)
+	});
+}
+	function updateOrder()
+	{
+		var inId=document.getElementById("tableid").value;
+		var inorderId = document.getElementById("orderId").value;
+		var inuserId = document.getElementById("userId").value;
+		var increatedDate = document.getElementById("createdDate").value;
+		var orderInfo={id:inId,userId:inuserId,orderId:inorderId,createdDate:increatedDate};	
+		var promise = window.fetch("/v1/order-service/update-order",{
+			method:'PUT',
+			headers: {
+			    'Content-Type': 'application/json;charset=utf-8'
+			  },
+			body: JSON.stringify(orderInfo)
+		});
+		promise.then(response=>response.text())
+		.then(message =>{
+			console.log(message)
+		});
+				
+	}
+	
+	function deleteOrder()
+	{
+		var inId=document.getElementById("tableid").value;
+		//var inorderId = document.getElementById("orderId").value;
+		//var inuserId = document.getElementById("userId").value;
+		//var increatedDate = document.getElementById("createdDate").value;
+		//var orderInfo={id:inId,userId:inuserId,orderId:inorderId,createdDate:increatedDate};
+		var orderInfo={id:inId}
+		var promise = window.fetch("/v1/order-service/delete-order",{
+			method:'DELETE',
+			headers: {
+			    'Content-Type': 'application/json;charset=utf-8'
+			  },
+			body: JSON.stringify(orderInfo)
+		});
+		promise.then(response=>response.text())
+		.then(message =>{
+			console.log(message)
+		});
+				
+	}
+	
+	function listOrders()
+	{
+		
+		window.fetch("/v1/order-service/list-order",{
+			method:'GET'
+		})
+		.then(response=>{return response.json();})
+		.then(orders =>{
+			console.log(orders);
+			const ids = orders.map(orders => orders.id).join("\n");
+			console.log(ids);
+			/* document.getElementById("testMsg").innerHTML+=message;
+			var orders=JSON.parse(message);
+			document.getElementById("testMsg").innerHTML+=orders; */
+			for(var i=0;i<orders.length;i++){
+				document.getElementById("listOrders").innerHTML+=
+					"<tr>"+
+					"<td>"+orders[i].id+"</td>"+
+					"<td>"+orders[i].orderId+"</td>"+
+					"<td>"+orders[i].createdDate+"</td>"+
+					"<td>"+orders[i].userId+"</td>"+
+				"</tr>"
+			} 
+			
+			
+				
+		});
+		
+		
+				
+	}
+</script>
+</head>
+<body style="position:relative;overflow: scroll;">
+
+
+
+	<div style="width:50%;" class="container" >
+		<h1>Manage Orders</h1>
+
+		<form>
+			<input type="text" id="tableid" required="required" /> <input
+				type="text" id="orderId" placeholder="Order ID" /> <input
+				type="text" id="userId" placeholder="User ID" /> <input
+				type="text" id="createdDate" placeholder="Created Date" />
+			<button class="btn btn-primary"
+				style="width: 40%; display: inline-block; margin: 10px;"
+				onclick="addOrder()">Add Order</button>
+
+			<button class="btn btn-primary"
+				style="width: 40%; display: inline-block; margin: 10px;"
+				onclick="updateOrder()">Update Order</button>
+
+			<button class="btn btn-primary" style="width: 40%; margin: 10px;"
+				onclick="deleteOrder()">Delete Order</button>
+			<button class="btn btn-primary"
+				style="width: 40%; display: inline-block; margin: 10px;"
+				onclick="listOrders()">List Orders</button>
+			<div style="display: inline-block; text-align: center; width: 100%">
+				<button type="reset" class="btn">Clear</button>
+			</div>
+		</form>
+
+	</div>
+<div style="margin-top:10%">
+	<table class="table table-bordered sortable"
+		style="width: 50%; margin: auto; margin-top: 10%; margin-bottom: 10%;color:red">
+		<thead >
+			<tr>
+				<th scope="col">Id</th>
+				<th scope="col">Order Id</th>
+				<th scope="col">Created Date</th>
+				<th scope="col">User Id</th>
+				
+			</tr>
+		</thead>
+		<tbody id="listOrders" style="color: red;">
+
+
+		
+		</tbody>
+	</table>
+	</div>
+	
+
+</body>
+</html>
